@@ -1,6 +1,7 @@
+const useDivForReset = document.querySelector('#div2');
+const pauseButton    = document.createElement('input');
+
 function createPauseButton() {
-    const useDivForReset = document.querySelector('#div2');
-    const pauseButton    = document.createElement('input');
     pauseButton.setAttribute('id','pauseButton');
     pauseButton.setAttribute('type','button');
     pauseButton.setAttribute('value','Pause ?');
@@ -9,8 +10,21 @@ function createPauseButton() {
     useDivForReset.appendChild(pauseButton); 
 }
 
+function pauseInterval() {
+    pause = true;
+    pauseButton.setAttribute('value','Continue ?');
+}
+
+function resumeInterval() {
+    pause = false;
+    pauseButton.setAttribute('value','Pause ?');
+    if     (gameMode == 1) challenge1Action();
+    else if(gameMode == 2) challenge2Action();
+}
+
 function pauseButtonAction() {
-    window.alert('Not implemented yet.')
+    if      (pause == false) return pauseInterval();
+    else if (pause == true ) return resumeInterval();
 }
 
 createPauseButton();
