@@ -9,13 +9,13 @@ function homePage(){
     localStorage.clear;
     wrongAnswerCounter = 0
     goodAnswerCounter = 0
-    // stopTheTimer = false;
     clearInterval(myInterval1);
     clearInterval(myInterval2);
     myInterval1 = null;
     myInterval2 = null;
     timeLimit1 = 120;
     timeLimit2 = 15;
+    pause = false;
     addSecond = 0, subSecond = 0;
     tmp.textContent = "Waiting to start timer...";
     fetchHome.innerHTML = homeClone.innerHTML;
@@ -47,34 +47,40 @@ challenge_1.addEventListener('click', initC1)
 const titre = document.body.querySelector('b')
 titre.innerText = ('Le Super Quizz')
 
-// let stopTheTimer = false;
 let addSecond = 0, subSecond = 0;
 let myInterval1;
 let myInterval2;
 let timeLimit1 = 120;
+let maximumSecond1 = 180;
+let gameMode = 0;
+let pause = false;
 
 //SPECIFIC FUNCTION
 function timerChallenge() {
-    if(timeLimit1 != 0) timeLimit1 = timeLimit1 + addSecond - subSecond;
-    let minutes = Math.floor((timeLimit1 % 3600)/60);
-    let seconds = Math.floor(timeLimit1 % 60)
-    let displayMinutes = (minutes < 10) ? '0' + minutes : minutes;
-    let displaySeconds = (seconds < 10) ? '0' + seconds : seconds;
-    
-    tmp.textContent = displayMinutes + ':' + displaySeconds;
 
-    if(timeLimit1 <= 0) {;
-        homePage();
-        // stopTheTimer = true;
-        return 0;
-    }else {
-        timeLimit1--;
-        addSecond = 0; subSecond = 0;
-    }
+    if(pause == false) {
+        if(timeLimit1 != 0) timeLimit1 = timeLimit1 + addSecond - subSecond;
+        if(timeLimit1 > maximumSecond1) timeLimit1 = maximumSecond1;
+        let minutes = Math.floor((timeLimit1 % 3600)/60);
+        let seconds = Math.floor(timeLimit1 % 60)
+        let displayMinutes = (minutes < 10) ? '0' + minutes : minutes;
+        let displaySeconds = (seconds < 10) ? '0' + seconds : seconds;
+        
+        tmp.textContent = displayMinutes + ':' + displaySeconds;
+
+        if(timeLimit1 <= 0) {
+            homePage();
+            return 0;
+        }else {
+            timeLimit1--;
+            addSecond = 0; subSecond = 0;
+        }
+    }else return; 
 }
 
 function initC1() {
-    myInterval1 = setInterval(timerChallenge,1000)
+    gameMode = 1;
+    myInterval1 = setInterval(timerChallenge,1000);
     challenge1Action();
 }
 
@@ -82,38 +88,59 @@ function challenge1Action(){
     fetchHome.innerHTML = ('')
     number = getRandomInt(1,2000)
 
-    // if(stopTheTimer == false) {
-        let answDocker = document.createElement('ul')
+    let answDocker = document.createElement('ul')
 
-        let answContainer = [
-            document.createElement('li'),
-            document.createElement('li'),
-            document.createElement('li'),  
-            document.createElement('li')
-        ]
+    let answContainer = [
+        document.createElement('p'),
+        document.createElement('p'),
+        document.createElement('p'),  
+        document.createElement('p')
+    ]
 
-        let answer = [
-            allQuestions[number].rep1,
-            allQuestions[number].rep2,
-            allQuestions[number].rep3,
-            allQuestions[number].rep4
-        ]
+    let answStyle = [
+        document.createElement('button'),
+        document.createElement('button'),
+        document.createElement('button'),  
+        document.createElement('button')
+    ]
 
-        fetchHome.innerHTML = 'Question : ' + allQuestions[number].quizz;
-        fetchHome.appendChild(answDocker);
+    let answerContent = [
+        allQuestions[number].rep1,
+        allQuestions[number].rep2,
+        allQuestions[number].rep3,
+        allQuestions[number].rep4
+    ]
 
-        for(let index = 0; index < answContainer.length; index++) {
-            if(answer[index] == undefined || answer[index] == undefined) break;
+    let answerArray = [];
+    for(let index = 0; index < answContainer.length; index++) {
+        if(answerContent[index] == undefined) answerArray.push("Supprimer");
+        else answerArray.push(answerContent[index]) 
+    }
+    if(allQuestions[number].goodrep > answerArray.length) { challenge1Action(); console.log('wait ?')}
 
-            answContainer[index].innerHTML = answer[index];
-            answContainer[index].setAttribute('answIndex', index + 1);
-            answContainer[index].setAttribute('type', 'button');
-            answContainer[index].addEventListener('mouseover', getColor);
-            answContainer[index].addEventListener('mouseout', removeColor);
-            answContainer[index].addEventListener('click', answChecker1)
-            fetchHome.appendChild(answContainer[index])
-        }
-    // }else homePage()
+    answerArray.push(answerArray[allQuestions[number].goodrep - 1]);
+    let answerRandom = [answerArray[0],answerArray[1],answerArray[2],answerArray[3]].sort( () => .5 - Math.random() );
+
+    fetchHome.innerHTML = 'Question : ' + allQuestions[number].quizz;
+    fetchHome.appendChild(answDocker);
+
+    for(let index = 0; index < answContainer.length; index++) {
+
+        let fetchRightAnswer = 0;
+        if(answerRandom[index].includes(answerArray[answerArray.length-1])) fetchRightAnswer = 1;
+        else fetchRightAnswer = 0;
+
+        answStyle[index].innerHTML = answerRandom[index];
+        answStyle[index].setAttribute('answIndex', fetchRightAnswer);
+        answStyle[index].setAttribute('type', 'button');
+        answStyle[index].addEventListener('mouseover', getColor);
+        answStyle[index].addEventListener('mouseout', removeColor);
+        answStyle[index].addEventListener('click', answChecker1)
+        answContainer[index].appendChild(answStyle[index])
+        fetchHome.appendChild(answContainer[index])
+
+        if(answerRandom[index] == "Supprimer") answContainer[index].remove()          
+    }
 }
 
 function answChecker1(){
