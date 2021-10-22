@@ -1,12 +1,5 @@
-const tmp = document.querySelector('#tmp');
-tmp.textContent = "Waiting to start timer...";
-
-let gameMode;
-let myInterval;
-let timeLimit;
-let maximumSecond;
-let addSecond = 0, subSecond = 0;
-let pause = false;
+let timeLimit = null;
+let maximumSecond = null;
 
 function displayTimer() {
 
@@ -20,18 +13,17 @@ function displayTimer() {
 function gameModeCondition() {
 
   if(timeLimit <= 0) {
-      console.log('hello')
 
-    if     (gameMode == 1) { homePage(); }
-    else if(gameMode == 2) {
+    if     (gameMode == 0) { homePage(); }
+    else if(gameMode == 1) {
 
       timeLimit = maximumSecond; /**/ wrongAnswerCounter += 1;
       localStorage.setItem('Good answer :', goodAnswerCounter);
       localStorage.setItem('Wrong answer :', wrongAnswerCounter);
-      challengeAction();
+      challenge2Action();
     }
   }else {
-    timeLimit--; addSecond = 0; subSecond = 0;
+    timeLimit1--; addSecond = 0; subSecond = 0;
   }
 }
 
@@ -45,3 +37,10 @@ function runTimer() {
     displayTimer(); /**/ gameModeCondition();
   }else return; 
 }
+
+
+
+
+///////////////////////////////////////////////
+// I I I I I I I I I I I I I I I I I I I I I //
+/////////////////:FONCTIONS:///////////////////

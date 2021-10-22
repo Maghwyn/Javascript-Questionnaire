@@ -1,7 +1,7 @@
 const pauseButton    = document.createElement('input');
 
 function createPauseButton() {
-    const useDiv2ForReset = document.querySelector('#div2');
+    const useDiv2ForReset = document.querySelector('#div1');
     pauseButton.setAttribute('id','pauseButton');
     pauseButton.setAttribute('type','button');
     pauseButton.setAttribute('value','Pause');
@@ -15,6 +15,7 @@ function createPauseButton() {
 function pauseInterval() {
     pause = true;
     pauseButton.setAttribute('value','Reprendre');
+    fetchHome.innerHTML = ('');
 }
 
 function resumeInterval() {
